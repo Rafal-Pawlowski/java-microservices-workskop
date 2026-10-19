@@ -13,6 +13,7 @@ public class NotificationService {
     private static final Logger log = LoggerFactory.getLogger(NotificationService.class);
 
     public NotificationResult send(UUID orderId, String customerEmail, String message) {
+
         UUID notificationId = UUID.randomUUID();
         Instant sentAt = Instant.now();
 

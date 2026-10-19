@@ -3,6 +3,8 @@ package pl.edu.agh.workshop.client.notification;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
+import pl.edu.agh.workshop.exception.NotificationServiceUnavailableException;
 
 import java.util.UUID;
 
@@ -23,10 +25,14 @@ public class NotificationClient {
                 customerEmail,
                 message
         );
-        return restClient.post()
-                .uri("/api/notifications")
-                .body(request)
-                .retrieve()
-                .body(NotificationClientResponse.class);
+        try {
+            return restClient.post()
+                    .uri("/api/notifications")
+                    .body(request)
+                    .retrieve()
+                    .body(NotificationClientResponse.class);
+        } catch (RestClientException exception) {
+            throw new NotificationServiceUnavailableException(exception);
+        }
     }
 }
