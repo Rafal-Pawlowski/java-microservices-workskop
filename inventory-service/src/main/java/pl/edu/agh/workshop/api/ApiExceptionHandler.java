@@ -36,6 +36,4 @@ public class ApiExceptionHandler {
         problem.setProperty("errorCode", "INVALID_REQUEST");
         return problem;
     }
-
-
 }
