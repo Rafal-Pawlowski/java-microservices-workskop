@@ -20,19 +20,7 @@ public class NotificationClient {
     public NotificationClientResponse send(UUID orderId,
                                            String customerEmail,
                                            String message) {
-        SendNotificationRequest request = new SendNotificationRequest(
-                orderId,
-                customerEmail,
-                message
-        );
-        try {
-            return restClient.post()
-                    .uri("/api/notifications")
-                    .body(request)
-                    .retrieve()
-                    .body(NotificationClientResponse.class);
-        } catch (RestClientException exception) {
-            throw new NotificationServiceUnavailableException(exception);
-        }
+        //todo: Send POST request to notification-service
+        throw new UnsupportedOperationException("TODO: implement notification call");
     }
 }

@@ -24,21 +24,13 @@ public class OrderService {
     public OrderResult createOrder(String productId,
                                    int quantity,
                                    String customerEmail) {
-        UUID orderId = UUID.randomUUID();
-        InventoryReservationResponse reservation =
-                Objects.requireNonNull(
-                        inventoryClient.reserve(productId, quantity),
-                        "Inventory service returned an empty response"
-                );
-        NotificationClientResponse notificationn =
-                Objects.requireNonNull(
-                        notificationClient.send(
-                                orderId,
-                                customerEmail,
-                                "Your order " + orderId + " has been created."
-                        ),
-                        "Notification service returned an empty response"
-                );
-        return new OrderResult(orderId, reservation.reservationId(), productId, quantity, notificationn.status());
+        /*
+        * todo:
+        *  1. Generate orderId.
+        *  2. Reserve the product using InventoryClient
+        *  3. Send a notification using NotificationClient
+        *  4. Return OrderResult
+        *  */
+        throw new UnsupportedOperationException("TODO: implement order creation flow");
     }
 }

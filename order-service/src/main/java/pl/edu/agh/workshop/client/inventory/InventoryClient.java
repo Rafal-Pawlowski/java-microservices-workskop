@@ -19,21 +19,7 @@ public class InventoryClient {
     }
 
     public InventoryReservationResponse reserve(String productId, int quantity) {
-        try {
-            InventoryReservationRequest request = new InventoryReservationRequest(productId, quantity);
-            return restClient.post()
-                    .uri("/api/inventory/reservations")
-                    .body(request)
-                    .retrieve()
-                    .body(InventoryReservationResponse.class);
-
-        } catch (HttpClientErrorException.NotFound e) {
-            throw new ProductNotFoundException(productId);
-        } catch (HttpClientErrorException.Conflict e) {
-            throw new OutOfStockException(productId, quantity);
-        } catch (RestClientException e) {
-            throw new InventoryServiceUnavailableException(e);
-        }
+        //todo send POST request to inventory-service
+      throw new UnsupportedOperationException("TODO: implement inventory reservation call");
     }
-
 }
