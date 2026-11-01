@@ -10,14 +10,21 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class InventoryService {
 
-    private final Map<String, Integer> stock = new ConcurrentHashMap<>(
-            Map.of("LAPTOP-001", 10,
-                    "PHONE-001", 5,
-                    "HEADPHONES-001", 0)
-    );
+    private final InventoryRepository inventoryRepository;
+
+    public InventoryService(InventoryRepository inventoryRepository) {
+        this.inventoryRepository = inventoryRepository;
+    }
 
     public InventorySnapshot getInventory(String productId) {
-        int availableQuantity = stock.getOrDefault(productId, 0);
+        InventoryEntity inventoryEntity = inventoryRepository.findInventoryEntityByProductId(productId);
+
+        if (inventoryEntity == null) {
+            throw new ProductNotFoundException(productId);
+        }
+
+        int availableQuantity= inventoryEntity.getQuantity();
+
         return new InventorySnapshot(
                 productId,
                 availableQuantity
@@ -28,19 +35,20 @@ public class InventoryService {
         if (quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be greater than zero.");
         }
-        Integer availableQuantity = stock.get(productId);
+        InventoryEntity entity = inventoryRepository.findInventoryEntityByProductId(productId);
 
-        if (availableQuantity == null) {
+        if (entity == null) {
             throw new ProductNotFoundException(productId);
         }
 
-        if (availableQuantity < quantity) {
-            throw new OutOfStockException(productId, quantity, availableQuantity);
+        if (entity.getQuantity() < quantity) {
+            throw new OutOfStockException(productId, quantity, entity.getQuantity());
         }
 
-        int remainingQuantity = availableQuantity - quantity;
+        int remainingQuantity = entity.getQuantity() - quantity;
+        entity.setQuantity(remainingQuantity);
 
-        stock.put(productId, remainingQuantity);
+        inventoryRepository.save(entity);
 
         return new InventoryReservation(
                 UUID.randomUUID(),
