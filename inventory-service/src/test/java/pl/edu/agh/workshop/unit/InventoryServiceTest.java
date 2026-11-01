@@ -1,4 +1,4 @@
-package unit;
+package pl.edu.agh.workshop.unit;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,6 +8,7 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 import pl.edu.agh.workshop.domain.*;
+import pl.edu.agh.workshop.domain.config.interfaces.UUIDGenerator;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -24,14 +25,19 @@ public class InventoryServiceTest {
     @Mock
     private InventoryRepository repository;
 
+    @Mock
+    private UUIDGenerator uuidGenerator;
+
     @InjectMocks
     private InventoryService service;
 
     @Test
     void getInventorySnapshotByProductId() {
         //given
+        var uuid = UUID.randomUUID();
+
         var entity = new InventoryEntity();
-        entity.setUuid(UUID.randomUUID());
+        entity.setUuid(uuid);
         entity.setProductId("test-product_id1");
         entity.setQuantity(10);
 
@@ -86,6 +92,7 @@ public class InventoryServiceTest {
             );
 
             when(repository.findInventoryEntityByProductId(productId)).thenReturn(entity);
+            when(uuidGenerator.generate()).thenReturn(fixedUuidForReservation);
 
             //when
             var inventoryReservation = service.reserve(productId, 10);

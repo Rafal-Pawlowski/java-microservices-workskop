@@ -2,6 +2,8 @@ package pl.edu.agh.workshop.domain;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import pl.edu.agh.workshop.domain.config.Config;
+import pl.edu.agh.workshop.domain.config.interfaces.UUIDGenerator;
 
 import java.util.Map;
 import java.util.UUID;
@@ -12,9 +14,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
+    private final UUIDGenerator uuidGenerator;
 
-    public InventoryService(InventoryRepository inventoryRepository) {
+    public InventoryService(InventoryRepository inventoryRepository, UUIDGenerator uuidGenerator) {
         this.inventoryRepository = inventoryRepository;
+        this.uuidGenerator = uuidGenerator;
     }
 
     public InventorySnapshot getInventory(String productId) {
@@ -62,7 +66,7 @@ public class InventoryService {
         );
 
         return new InventoryReservation(
-                UUID.randomUUID(),
+                uuidGenerator.generate(),
                 productId,
                 quantity,
                 remainingQuantity,

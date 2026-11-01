@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: inventory-service
+  datasource:
+    driverClassName: org.postgresql.Driver
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: none
+  sql:
+    init:
+      mode: never
+
+server:
+  port: 8081
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
