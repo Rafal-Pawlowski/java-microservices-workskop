@@ -2,6 +2,7 @@ package pl.edu.agh.workshop.api;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.agh.workshop.domain.InventoryReservation;
 import pl.edu.agh.workshop.domain.InventoryService;
@@ -19,10 +20,10 @@ public class InventoryController {
     }
 
     @GetMapping("/{productId}")
-    public InventoryResponse getInventory(@PathVariable String productId) {
+    public ResponseEntity<InventoryResponse> getInventory(@PathVariable String productId) {
 
         InventorySnapshot snapshot = inventoryService.getInventory(productId);
-        return InventoryResponse.from(snapshot);
+        return ResponseEntity.ok(InventoryResponse.from(snapshot));
     }
 
     @PostMapping("/reservations")
@@ -31,7 +32,7 @@ public class InventoryController {
         InventoryReservation reservation = inventoryService.reserve(
                 request.productId(),
                 request.quantity()
-                );
+        );
         return ReservationResponse.from(reservation);
     }
 }

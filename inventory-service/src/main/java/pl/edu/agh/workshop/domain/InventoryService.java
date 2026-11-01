@@ -1,19 +1,18 @@
 package pl.edu.agh.workshop.domain;
 
 import org.springframework.stereotype.Service;
-import pl.edu.agh.workshop.api.InventoryResponse;
-
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
+import pl.edu.agh.workshop.domain.config.Config;
+import pl.edu.agh.workshop.domain.config.interfaces.UUIDGenerator;
 
 @Service
 public class InventoryService {
 
     private final InventoryRepository inventoryRepository;
+    private final UUIDGenerator uuidGenerator;
 
-    public InventoryService(InventoryRepository inventoryRepository) {
+    public InventoryService(InventoryRepository inventoryRepository, UUIDGenerator uuidGenerator) {
         this.inventoryRepository = inventoryRepository;
+        this.uuidGenerator = uuidGenerator;
     }
 
     public InventorySnapshot getInventory(String productId) {
@@ -51,7 +50,7 @@ public class InventoryService {
         inventoryRepository.save(entity);
 
         return new InventoryReservation(
-                UUID.randomUUID(),
+                uuidGenerator.generate(),
                 productId,
                 quantity,
                 remainingQuantity,
