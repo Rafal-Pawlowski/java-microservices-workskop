@@ -1,13 +1,14 @@
 package pl.edu.agh.workshop.domain;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import pl.edu.agh.workshop.api.InventoryResponse;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+@Slf4j
 public class InventoryService {
 
     private final Map<String, Integer> stock = new ConcurrentHashMap<>(
@@ -41,6 +42,16 @@ public class InventoryService {
         int remainingQuantity = availableQuantity - quantity;
 
         stock.put(productId, remainingQuantity);
+
+        UUID reservationId = UUID.randomUUID();
+        log.info("[INVENTORY] Reservation created:\n " +
+                        "reservationId={}, productId={}, \n " +
+                        "reservedQuantity={}, remainingQuantity={}",
+                reservationId,
+                productId,
+                quantity,
+                remainingQuantity
+        );
 
         return new InventoryReservation(
                 UUID.randomUUID(),

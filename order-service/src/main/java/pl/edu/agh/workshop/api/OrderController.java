@@ -1,6 +1,7 @@
 package pl.edu.agh.workshop.api;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.agh.workshop.application.OrderService;
@@ -8,6 +9,7 @@ import pl.edu.agh.workshop.domain.OrderResult;
 
 @RestController
 @RequestMapping("/api/orders")
+@Slf4j
 public class OrderController {
 
     private final OrderService orderService;
@@ -19,6 +21,8 @@ public class OrderController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public OrderResponse createOrder(@Valid @RequestBody CreateOrderRequest request) {
+        log.info("[ORDER] HTTP request received : productId={}, quantity={}", request.productId(), request.quantity());
+
         OrderResult result = orderService.createOrder(
                 request.productId(),
                 request.quantity(),

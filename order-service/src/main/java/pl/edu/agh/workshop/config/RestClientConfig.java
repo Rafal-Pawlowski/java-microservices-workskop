@@ -9,18 +9,14 @@ import org.springframework.web.client.RestClient;
 public class RestClientConfig {
 
     @Bean
-    RestClient inventoryRestClient(
-            RestClient.Builder builder,
-            @Value("${services.inventory.base-url}") String baseUrl) {
+    RestClient inventoryRestClient(RestClient.Builder builder, @Value("${services.inventory.base-url}") String baseUrl) {
         return builder
                 .baseUrl(baseUrl)
                 .build();
     }
 
     @Bean
-    RestClient notificationRestClient(
-            RestClient.Builder builder,
-            @Value("${services.notification.base-url}") String baseUrl){
+    RestClient notificationRestClient(RestClient.Builder builder, @Value("${services.notification.base-url}") String baseUrl) {
         return builder
                 .baseUrl(baseUrl)
                 .build();
