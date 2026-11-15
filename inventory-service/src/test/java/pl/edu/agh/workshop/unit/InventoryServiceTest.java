@@ -105,14 +105,56 @@ public class InventoryServiceTest {
         }
     }
 
-    //TODO: Implement test methods to check all possible exceptions
+    @Test
+    void noGetInventoryReservationByQuantityIsLowerThan0() {
+        //given
+        int quantity = 0;
+        String productId = "test-product_id1";
+
+        //when + then
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> service.reserve(productId, quantity),
+                "Quantity must be greater than zero."
+        );
+    }
 
     @Test
-    void noGetInventoryReservationByQuantityIsLowerThan0() {}
+    void noGetInventoryReservationByProductNotFoundException() {
+        //given
+        int quantity = 1;
+        String productId = "no-existing-id";
+
+        when(repository.findInventoryEntityByProductId(productId)).thenReturn(null);
+
+        //when + then
+        assertThrows(
+                ProductNotFoundException.class,
+                () -> service.reserve(productId, quantity),
+                "Product not found: %s".formatted(productId)
+        );
+    }
 
     @Test
-    void noGetInventoryReservationByProductNotFoundException() {}
+    void noGetInventoryReservationByOutOfStockException() {
+        //given
+        int quantity = 1;
+        String productId = "test-product_id1";
+        var uuid = UUID.randomUUID();
+        var availableQuantity = 0;
+        var inventoryEntity = new InventoryEntity();
+        inventoryEntity.setProductId(productId);
+        inventoryEntity.setUuid(uuid);
+        inventoryEntity.setQuantity(0);
 
-    @Test
-    void noGetInventoryReservationByOutOfStockException() {}
+        when(repository.findInventoryEntityByProductId(productId)).thenReturn(inventoryEntity);
+
+        //when + then
+        assertThrows(
+                OutOfStockException.class,
+                () -> service.reserve(productId, quantity),
+                "Not enough stock for product %s. Requested: %d, available: %d"
+                .formatted(productId, quantity, availableQuantity)
+        );
+    }
 }

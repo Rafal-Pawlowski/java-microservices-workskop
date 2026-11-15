@@ -144,14 +144,83 @@ class InventoryControllerRestTemplateIntegrationTest extends TestcontainersConfi
         );
     }
 
-    //TODO
+    @Test
+    void shouldNotCreateInventoryReservationByQuantityIsLowerThan0() {
+        //given
+        var endpoint = "/api/inventory/reservations";
+        var uri = baseUri + serverPort + endpoint;
+
+        String productId = "test-product_id1";
+
+        var body = new ReservationRequest(productId, 0);
+
+        //when
+        var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        var request = new HttpEntity<>(body, headers);
+
+        var responseBody = restTemplate.exchange(
+                URI.create(uri),
+                HttpMethod.POST,
+                request,
+                ProblemDetail.class
+        );
+
+        //then
+        assertEquals(HttpStatusCode.valueOf(400), responseBody.getStatusCode());
+    }
 
     @Test
-    void shouldNotCreateInventoryReservationByQuantityIsLowerThan0() {}
+    void shouldNotCreateInventoryReservationByProductNotFoundException() {
+        //given
+        var endpoint = "/api/inventory/reservations";
+        var uri = baseUri + serverPort + endpoint;
+
+        String productId = "not-existing-id";
+        var body = new ReservationRequest(productId, 2);
+
+        //when
+        var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        var request = new HttpEntity<>(body, headers);
+
+        var responseBody = restTemplate.exchange(
+                URI.create(uri),
+                HttpMethod.POST,
+                request,
+                ProblemDetail.class
+        );
+
+        //then
+        assertEquals(HttpStatusCode.valueOf(404), responseBody.getStatusCode());
+        assert responseBody.getBody() != null;
+        assertEquals("Product not found: %s".formatted(productId), responseBody.getBody().getDetail());
+    }
 
     @Test
-    void shouldNotCreateInventoryReservationByProductNotFoundException() {}
+    void shouldNotCreateInventoryReservationByOutOfStockException() {
+        //given
+        var endpoint = "/api/inventory/reservations";
+        var uri = baseUri + serverPort + endpoint;
 
-    @Test
-    void shouldNotCreateInventoryReservationByOutOfStockException() {}
+        String productId = "test-product_id1";
+        var body = new ReservationRequest(productId, 200);
+
+        //when
+        var headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        var request = new HttpEntity<>(body, headers);
+
+        var responseBody = restTemplate.exchange(
+                URI.create(uri),
+                HttpMethod.POST,
+                request,
+                ProblemDetail.class
+        );
+
+        //then
+        assertEquals(HttpStatusCode.valueOf(409), responseBody.getStatusCode());
+        assert responseBody.getBody() != null;
+        assertEquals("Not enough stock for product %s. Requested: %d, available: %d".formatted(productId, 200, 4), responseBody.getBody().getDetail());
+    }
 }
