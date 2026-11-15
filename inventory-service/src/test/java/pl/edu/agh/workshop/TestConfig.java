@@ -3,7 +3,7 @@ package pl.edu.agh.workshop;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
-import pl.edu.agh.workshop.domain.config.interfaces.UUIDGenerator;
+import pl.edu.agh.workshop.api.config.interfaces.UUIDGenerator;
 
 import java.util.UUID;
 

@@ -1,4 +1,4 @@
-package pl.edu.agh.workshop.domain;
+package pl.edu.agh.workshop.api;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Controller;

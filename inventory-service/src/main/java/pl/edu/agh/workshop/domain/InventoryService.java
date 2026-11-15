@@ -2,8 +2,9 @@ package pl.edu.agh.workshop.domain;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import pl.edu.agh.workshop.domain.config.Config;
-import pl.edu.agh.workshop.domain.config.interfaces.UUIDGenerator;
+import pl.edu.agh.workshop.api.InventoryEntity;
+import pl.edu.agh.workshop.api.InventoryRepository;
+import pl.edu.agh.workshop.api.config.interfaces.UUIDGenerator;
 
 import java.util.Map;
 import java.util.UUID;

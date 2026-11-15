@@ -15,7 +15,7 @@ import pl.edu.agh.workshop.TestcontainersConfiguration;
 import pl.edu.agh.workshop.api.InventoryResponse;
 import pl.edu.agh.workshop.api.ReservationRequest;
 import pl.edu.agh.workshop.api.ReservationResponse;
-import pl.edu.agh.workshop.domain.InventoryEntity;
+import pl.edu.agh.workshop.api.InventoryEntity;
 import pl.edu.agh.workshop.domain.InventorySnapshot;
 import pl.edu.agh.workshop.domain.ReservationStatus;
 
