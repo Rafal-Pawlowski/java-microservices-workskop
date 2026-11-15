@@ -1,6 +1,5 @@
 package pl.edu.agh.workshop.integration;
 
-import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,7 @@ import pl.edu.agh.workshop.TestcontainersConfiguration;
 import pl.edu.agh.workshop.api.InventoryResponse;
 import pl.edu.agh.workshop.api.ReservationRequest;
 import pl.edu.agh.workshop.api.ReservationResponse;
-import pl.edu.agh.workshop.domain.InventoryEntity;
+import pl.edu.agh.workshop.api.InventoryEntity;
 import pl.edu.agh.workshop.domain.InventorySnapshot;
 import pl.edu.agh.workshop.domain.ReservationStatus;
 

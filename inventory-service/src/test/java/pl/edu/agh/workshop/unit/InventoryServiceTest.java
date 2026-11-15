@@ -6,12 +6,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.ActiveProfiles;
+import pl.edu.agh.workshop.api.InventoryEntity;
+import pl.edu.agh.workshop.api.InventoryRepository;
 import pl.edu.agh.workshop.domain.*;
-import pl.edu.agh.workshop.domain.config.interfaces.UUIDGenerator;
+import pl.edu.agh.workshop.api.config.interfaces.UUIDGenerator;
 
-import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

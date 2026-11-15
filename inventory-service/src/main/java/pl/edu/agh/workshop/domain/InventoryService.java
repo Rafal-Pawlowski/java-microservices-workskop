@@ -1,8 +1,9 @@
 package pl.edu.agh.workshop.domain;
 
 import org.springframework.stereotype.Service;
-import pl.edu.agh.workshop.domain.config.Config;
-import pl.edu.agh.workshop.domain.config.interfaces.UUIDGenerator;
+import pl.edu.agh.workshop.api.InventoryEntity;
+import pl.edu.agh.workshop.api.InventoryRepository;
+import pl.edu.agh.workshop.api.config.interfaces.UUIDGenerator;
 
 @Service
 public class InventoryService {

@@ -1,9 +1,9 @@
-package pl.edu.agh.workshop.domain.config;
+package pl.edu.agh.workshop.api.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import pl.edu.agh.workshop.domain.config.interfaces.UUIDGenerator;
+import pl.edu.agh.workshop.api.config.interfaces.UUIDGenerator;
 
 import java.util.UUID;
 

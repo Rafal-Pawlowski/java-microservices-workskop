@@ -1,4 +1,4 @@
-package pl.edu.agh.workshop.domain.config.interfaces;
+package pl.edu.agh.workshop.api.config.interfaces;
 
 import java.util.UUID;
 
