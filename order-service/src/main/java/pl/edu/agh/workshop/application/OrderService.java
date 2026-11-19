@@ -30,7 +30,7 @@ public class OrderService {
                         inventoryClient.reserve(productId, quantity),
                         "Inventory service returned an empty response"
                 );
-        NotificationClientResponse notificationn =
+        NotificationClientResponse notification =
                 Objects.requireNonNull(
                         notificationClient.send(
                                 orderId,
@@ -39,6 +39,6 @@ public class OrderService {
                         ),
                         "Notification service returned an empty response"
                 );
-        return new OrderResult(orderId, reservation.reservationId(), productId, quantity, notificationn.status());
+        return new OrderResult(orderId, reservation.reservationId(), productId, quantity, notification.status());
     }
 }
