@@ -12,7 +12,7 @@ public record InventoryResponse(String productId,
                                 int availableQuantity,
                                 boolean available) {
 
-    static InventoryResponse from(InventorySnapshot snapshot) {
+    public static InventoryResponse from(InventorySnapshot snapshot) {
         return new InventoryResponse(
                 snapshot.productId(),
                 snapshot.availableQuantity(),
