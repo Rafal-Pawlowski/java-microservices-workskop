@@ -735,7 +735,7 @@ order-service/src/main/java/pl/edu/agh/workshop/client/notification/Notification
 | `inventoryRestClient` | `notificationRestClient` |
 | port 8081 | port 8082 |
 
-Student nie poznaje więc drugiej, całkiem nowej techniki. Stosuje ponownie ten sam wzorzec do innego kontraktu HTTP.
+Stosujemy ponownie ten sam wzorzec do innego kontraktu HTTP.
 
 > Nie logujemy pełnego `customerEmail`. Adres e-mail jest daną użytkownika; do śledzenia flow wystarcza `orderId`.
 
@@ -856,7 +856,7 @@ Wyślij niepoprawne dane.
 Windows:
 
 ```powershell
-curl.exe -i -X POST "http://localhost:8080/api/orders" -H "Content-Type: application/json" -d '{"productId":"","quantity":-1,"customerEmail":"not-an-email"}'
+curl.exe -i -X POST "http://localhost:8080/api/orders" -H "Content-Type: application/json" -d '{\"productId\":\"\",\"quantity\":-1,\"customerEmail\":\"not-an-email\"}'
 ```
 
 macOS/Linux:
