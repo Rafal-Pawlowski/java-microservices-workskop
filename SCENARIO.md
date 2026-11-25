@@ -4,7 +4,7 @@ Ten scenariusz prowadzi krok po kroku przez komunikację synchroniczną HTTP pom
 
 Pracujemy na branchu `student`. Nie musisz znać wcześniej `RestClient`. Każdy etap zaczyna się od małego eksperymentu, a dopiero później przechodzimy do kodu.
 
-Kompletne implementacje TODO znajdują się na branchu `workshop-solution`. Nie przełączaj się na niego podczas wykonywania ćwiczeń — służy do późniejszego porównania rozwiązania.
+Kompletne implementacje TODO znajdują się na branchu `workshop-solution`. Nie przełączaj się na niego podczas wykonywania ćwiczeń, będzie służył do późniejszego porównania rozwiązania.
 
 ## Co zbudujemy
 
@@ -138,7 +138,7 @@ BUILD SUCCESS
 - `verify` uruchamia wszystkie kontrole przypięte do fazy `verify` i potwierdza, że cały projekt jest poprawny,
 - polecenie uruchomione w katalogu głównym buduje wszystkie moduły zapisane w sekcji `<modules>` głównego `pom.xml`.
 
-### Checkpoint 0
+### Checkpoint 1
 
 | Pytanie | Twoja odpowiedź |
 |---|---|
@@ -171,11 +171,10 @@ Otwórz poniższe pliki w podanej kolejności.
 3. `application/OrderService.java` — orkiestracja procesu,
 4. `client/inventory/InventoryClient.java` — wyjście HTTP do magazynu,
 5. `client/notification/NotificationClient.java` — wyjście HTTP do powiadomień,
-6. `domain/OrderResult.java` — wynik wewnętrzny,
+6. `domain/OrderResult.java` — rezultat,
 7. `api/OrderResponse.java` — odpowiedź HTTP dla klienta.
 
 ### `inventory-service`
-
 ```text
 ReservationRequest
     -> InventoryController
@@ -285,7 +284,7 @@ Każdy serwis powinien zwrócić `UP`.
 
 > Actuator odpowiada na pytanie „czy aplikacja działa technicznie?”. Nie gwarantuje jeszcze, że cały proces biznesowy działa poprawnie.
 
-### Checkpoint 1
+### Checkpoint 2
 
 | Serwis | Port | Status | Terminal z logami |
 |---|---:|---|---|
@@ -296,9 +295,6 @@ Każdy serwis powinien zwrócić `UP`.
 ---
 
 # 3. Sprawdź serwisy niezależnie
-
-Na Windows używamy `curl.exe`, aby uniknąć aliasu PowerShell `curl`. Na macOS/Linux zamień `curl.exe` na `curl`.
-
 ## 3.1. Odczytaj stan produktu
 
 Windows:
@@ -313,7 +309,7 @@ macOS/Linux:
 curl -i "http://localhost:8081/api/inventory/LAPTOP-001"
 ```
 
-Odczytaj początkową wartość `availableQuantity`.
+Komenda zwróci wartość `availableQuantity`.
 
 ## 3.2. Zarezerwuj produkt bezpośrednio
 
@@ -342,7 +338,7 @@ curl -i -X POST "http://localhost:8081/api/inventory/reservations" \
 
 Oczekiwany rezultat: `201 Created`, identyfikator rezerwacji i status `CONFIRMED`.
 
-Ponownie wykonaj `GET /api/inventory/LAPTOP-001`. Stan powinien zmniejszyć się o 1.
+Ponownie wykonaj `GET /api/inventory/LAPTOP-001` (patrz 3.1). Stan powinien zmniejszyć się o 1.
 
 ## 3.3. Wyślij powiadomienie bezpośrednio
 
@@ -372,7 +368,7 @@ curl -i -X POST "http://localhost:8082/api/notifications" \
 
 Oczekiwany rezultat: `201 Created` oraz status `SENT`.
 
-### Zatrzymaj się i odpowiedz
+### Pytanie kontrolne:
 
 Czy mikroserwisy komunikują się już ze sobą?
 
@@ -383,7 +379,7 @@ Nie. To klient wywołał każdy serwis osobno. Udowodniliśmy tylko, że endpoin
 
 </details>
 
-### Checkpoint 2
+### Checkpoint 3
 
 | Eksperyment | Status HTTP | Co pojawiło się w body? | W którym serwisie pojawił się log? |
 |---|---:|---|---|
@@ -427,18 +423,16 @@ TODO: implement order creation flow
 4. `InventoryClient` nie został jeszcze wywołany.
 5. Request nie dotarł do `inventory-service` ani `notification-service`.
 
-### Checkpoint 3
+### Checkpoint 4
 
 | Pytanie | Odpowiedź |
 |---|---|
 | Jaki status otrzymał klient? | |
 | Która klasa przerwała flow? | |
-| Czy w `inventory-service` pojawił się log rezerwacji? | |
-| Czy w `notification-service` pojawił się log? | |
 
 ---
 
-# 5. Zaimplementuj orkiestrację w `OrderService`
+# 5. Zaimplementuj orkiestracje w `OrderService`
 
 Otwórz:
 
@@ -490,7 +484,7 @@ return new OrderResult(
 );
 ```
 
-## Co właśnie zbudowałeś?
+## Podsumowanie pkt. 5
 
 1. `orderId` identyfikuje cały proces zamówienia.
 2. Wynik `InventoryClient` jest potrzebny do utworzenia `OrderResult`.
@@ -520,7 +514,7 @@ Tym razem flow powinien dojść dalej i zakończyć się komunikatem:
 TODO: implement inventory reservation call
 ```
 
-To postęp: `OrderController` i `OrderService` działają, a następna brakująca część została ujawniona.
+Do tego momentu `OrderController` i `OrderService` już działają.
 
 ---
 
@@ -532,7 +526,7 @@ Otwórz:
 order-service/src/main/java/pl/edu/agh/workshop/client/inventory/InventoryClient.java
 ```
 
-## STOP: właśnie przekraczasz granicę mikroserwisu
+## Właśnie przekraczasz granicę mikroserwisu
 
 Zatrzymaj się tutaj przed pisaniem kodu. `InventoryClient` ma inne zadanie niż `OrderService` albo `InventoryService`.
 
@@ -552,7 +546,7 @@ InventoryController w innym procesie JVM
 
 `InventoryClient` jest adapterem komunikacji wychodzącej. Reprezentuje w `order-service` dostęp do zewnętrznego systemu — tutaj do `inventory-service`.
 
-Odpowiada za szczegóły techniczne:
+Client odpowiada za szczegóły techniczne, takie jak:
 
 - wybór metody HTTP,
 - zbudowanie ścieżki endpointu,
@@ -562,7 +556,8 @@ Odpowiada za szczegóły techniczne:
 - deserializację JSON do obiektu Java,
 - docelowo także mapowanie błędów sieciowych i statusów HTTP.
 
-Nie powinien zawierać reguł biznesowych zamówienia. Decyzja „najpierw rezerwacja, później powiadomienie” należy do `OrderService`.
+Nie powinien zawierać reguł biznesowych zamówienia. 
+Decyzja „najpierw rezerwacja, później powiadomienie” należy do `OrderService`.
 
 ### Klasy tworzące kontrakt komunikacji
 
@@ -583,12 +578,12 @@ W tej aplikacji serwisy dzielą kontrakt HTTP/JSON, a nie pamięć i nie obiekty
 
 > Podobne nazwy DTO po obu stronach są celowe: opisują tę samą wiadomość sieciową z perspektywy dwóch niezależnych aplikacji.
 
-### Pytania przed przejściem dalej
+### Pytania kontrolne 1
 
 1. Która klasa wie, że używamy HTTP: `OrderService` czy `InventoryClient`?
 2. Która klasa ustala kolejność rezerwacji i powiadomienia?
 3. Co się stanie, jeśli `inventory-service` zmieni nazwę pola `reservationId` w JSON?
-4. Gdzie umieściłbyś timeout i mapowanie błędu `404`?
+4. Gdzie umieściłbyś mapowanie błędu `404`?
 
 <details>
 <summary>Sprawdź odpowiedzi</summary>
@@ -596,7 +591,7 @@ W tej aplikacji serwisy dzielą kontrakt HTTP/JSON, a nie pamięć i nie obiekty
 1. O HTTP wie `InventoryClient`.
 2. Kolejność ustala `OrderService`.
 3. Kontrakt przestanie być zgodny i deserializacja może się nie udać albo pole nie zostanie poprawnie wypełnione.
-4. Timeout konfigurujemy dla klienta HTTP, a status `404` mapujemy przy granicy, czyli w `InventoryClient`.
+4. Status `404` mapujemy przy granicy, czyli w `InventoryClient`.
 
 </details>
 
@@ -683,6 +678,22 @@ Uruchom ponownie `order-service`, jeżeli DevTools nie przeładował aplikacji a
 
 Ponownie wykonaj request z rozdziału 4.
 
+
+PowerShell:
+
+```powershell
+curl.exe -i -X POST "http://localhost:8080/api/orders" -H "Content-Type: application/json" -d '{\"productId\":\"LAPTOP-001\",\"quantity\":1,\"customerEmail\":\"student@agh.edu.pl\"}'
+```
+
+macOS/Linux:
+
+```bash
+curl -i -X POST "http://localhost:8080/api/orders" \
+  -H "Content-Type: application/json" \
+  -d '{"productId":"LAPTOP-001","quantity":1,"customerEmail":"student@agh.edu.pl"}'
+```
+
+
 Oczekiwany przebieg:
 
 1. `order-service` wywoła `inventory-service`,
@@ -704,7 +715,7 @@ Request zakończył się błędem, ale rezerwacja została już wykonana. Każdy
 
 W systemie produkcyjnym należałoby zaprojektować np. operację kompensującą, proces Saga albo komunikację zdarzeniową. Na tym warsztacie najważniejsze jest zauważenie problemu.
 
-### Checkpoint 4
+### Checkpoint 5
 
 | Pytanie | Odpowiedź |
 |---|---|
@@ -801,6 +812,21 @@ Uruchom ponownie `order-service`, jeśli jest to potrzebne.
 
 Wyślij poprawne zamówienie po raz trzeci.
 
+PowerShell:
+
+```powershell
+curl.exe -i -X POST "http://localhost:8080/api/orders" -H "Content-Type: application/json" -d '{\"productId\":\"LAPTOP-001\",\"quantity\":1,\"customerEmail\":\"student@agh.edu.pl\"}'
+```
+
+macOS/Linux:
+
+```bash
+curl -i -X POST "http://localhost:8080/api/orders" \
+  -H "Content-Type: application/json" \
+  -d '{"productId":"LAPTOP-001","quantity":1,"customerEmail":"student@agh.edu.pl"}'
+```
+
+
 Oczekiwany status:
 
 ```text
@@ -821,7 +847,7 @@ Przykładowa odpowiedź:
 
 Identyfikatory UUID będą inne przy każdym wywołaniu.
 
-## Odtwórz flow z logów
+## Zadanie kontrolne: Odtwórz flow z logów
 
 Ułóż logi chronologicznie:
 
@@ -837,7 +863,7 @@ Ułóż logi chronologicznie:
 10. `[NOTIFICATION -> ORDER] Notification response received`,
 11. `[ORDER] Notification completed`.
 
-### Checkpoint 5
+### Checkpoint 6
 
 | Pytanie | Odpowiedź |
 |---|---|
@@ -883,7 +909,7 @@ Sprawdź `CreateOrderRequest`:
 
 `@Valid` w `OrderController` uruchamia walidację przed wejściem do `OrderService`. Dlatego pozostałe mikroserwisy nie powinny otrzymać żadnego requestu.
 
-### Checkpoint 6
+### Checkpoint 7
 
 | Pytanie | Odpowiedź |
 |---|---|
@@ -917,6 +943,10 @@ BUILD SUCCESS
 
 Sprawdź własne zmiany:
 
+```text
+Alt + 0
+```
+lub
 ```bash
 git status
 git diff
@@ -960,8 +990,8 @@ Po wywołaniu przez `order-service` potrzebujemy świadomie zmapować wyjątek k
 
 ## C. Wyłącz `inventory-service`
 
-1. Zatrzymaj serwis działający na porcie 8081.
-2. Wyślij poprawne zamówienie do portu 8080.
+1. Zatrzymaj serwis działający na porcie 8081 - inventory-service.
+2. Wyślij poprawne zamówienie do portu 8080 - order-service.
 3. Znajdź w logach `Connection refused` lub inny `RestClientException`.
 
 W produkcyjnej aplikacji nie chcemy zwracać przypadkowego `500`. Lepszym kontraktem jest:
@@ -973,7 +1003,7 @@ W produkcyjnej aplikacji nie chcemy zwracać przypadkowego `500`. Lepszym kontra
 ## D. Wyłącz `notification-service`
 
 1. Uruchom ponownie inventory.
-2. Zatrzymaj notification na porcie 8082.
+2. Zatrzymaj notification na porcie 8082 - notification-service.
 3. Wyślij zamówienie.
 4. Sprawdź stan magazynu przed i po requeście.
 
@@ -1040,17 +1070,7 @@ Po zmianach sprawdź tabelę:
 | Inventory wyłączone | `503 Service Unavailable` |
 | Notification wyłączone | `503 Service Unavailable` |
 
-## G. Pytania projektowe bez kodowania
-
-1. Czy wysłanie powiadomienia musi blokować odpowiedź dla klienta?
-2. Czy notification lepiej wywołać synchronicznie, czy przez broker zdarzeń?
-3. Co się stanie, gdy klient ponowi ten sam request po timeoutcie?
-4. Jak zapobiec podwójnej rezerwacji?
-5. Jak połączyć logi trzech serwisów jednym `correlationId`?
-6. Gdzie dodać timeout, retry i circuit breaker?
-7. Których danych, np. adresu e-mail, nie powinniśmy umieszczać w logach?
-
-## H. Co można wykorzystać zamiast `RestClient`?
+## G. Co można wykorzystać zamiast `RestClient`?
 
 | Rozwiązanie | Kiedy może pasować? |
 |---|---|
@@ -1064,7 +1084,7 @@ Na warsztacie używamy `RestClient`, ponieważ dobrze pasuje do synchronicznego,
 
 ---
 
-# Ściąga: jak diagnozować błąd mikroserwisów
+# jak diagnozować błąd mikroserwisów
 
 1. Zapisz status HTTP otrzymany przez klienta.
 2. Zacznij od logów serwisu, do którego wysłałeś request.
@@ -1076,8 +1096,8 @@ Na warsztacie używamy `RestClient`, ponieważ dobrze pasuje do synchronicznego,
 8. Ustal, czy operacja częściowo zmieniła dane.
 9. Dopiero potem zmieniaj kod.
 
-# Odpowiedź na pytanie końcowe
+# Pytanie końcowe
 
 Co jest największym kosztem komunikacji synchronicznej?
 
-`order-service` jest zależny od dostępności i czasu odpowiedzi pozostałych serwisów. Prosty kod klienta HTTP tworzy zależność sieciową, którą trzeba obsłużyć za pomocą dobrych kontraktów błędów, timeoutów, obserwowalności i przemyślanej spójności danych.
+>`order-service` jest zależny od dostępności i czasu odpowiedzi pozostałych serwisów. Prosty kod klienta HTTP tworzy zależność sieciową, którą trzeba obsłużyć za pomocą dobrych kontraktów błędów, timeoutów, obserwowalności i przemyślanej spójności danych.

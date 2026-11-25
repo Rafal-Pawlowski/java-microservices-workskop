@@ -11,7 +11,6 @@ import java.util.UUID;
 @Slf4j
 public class NotificationClient {
 
-    //todo to pod spodem również zaimplementować podczas warsztatów i wskazać to jako zadanie dla studentów
     private final RestClient restClient;
 
     public NotificationClient(@Qualifier("notificationRestClient") RestClient restClient) {

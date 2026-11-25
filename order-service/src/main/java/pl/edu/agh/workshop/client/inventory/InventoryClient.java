@@ -9,7 +9,6 @@ import org.springframework.web.client.RestClient;
 @Slf4j
 public class InventoryClient {
 
-    //todo to poniżej również można jako livecoding, żeby pokazać jak przygotować klasę klienta
     public InventoryClient(@Qualifier("inventoryRestClient") RestClient restClient) {
         this.restClient = restClient;
     }
